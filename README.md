@@ -1,0 +1,2 @@
+# wordpressnew
+lamp
