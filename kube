@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+name: soaring-webshop-portal
+namespace: soaring-clouds
+labels:
+k8s-app: soaring-webshop-portal
+kubernetes.io/name: “soaring-webshop-portal”
+spec:
+ports:
+– name: webui
+port: 3020
+protocol: TCP
+targetPort: ui
+– name: reloader
+port: 4600
+protocol: TCP
+targetPort: reload
+type: NodePort
+selector:
+k8s-app: soaring-webshop-portal
+—
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+name: soaring-webshop-portal-deployment
+namespace: soaring-clouds
+labels:
+k8s-app: soaring-webshop-portal
+version: v2
+spec:
+template:
+metadata:
+labels:
+k8s-app: soaring-webshop-portal
+version: v2
+spec:
+containers:
+– name: soaring-portal
+image: lucasjellema/ojet-run-live-reload:0.1
+imagePullPolicy: Always
+resources:
+# keep request = limit to keep this container in guaranteed class
+limits:
+cpu: 100m
+requests:
+cpu: 100m
+env:
+– name: “GITHUB_URL”
+value: “https://github.com/lucasjellema/webshop-portal-soaring-through-the-cloud-native-sequel”
+ – name: “APPLICATION_ROOT_DIRECTORY”
+value: “”
+ports:
+– containerPort: 3000
+name: ui
+protocol: TCP
+– containerPort: 4500
+name: reload
+protocol: TCP
